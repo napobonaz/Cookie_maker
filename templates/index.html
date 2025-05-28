@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Cookie Cutter Generator</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="background-pattern"></div>
+    <div class="container">
+        <h1><i class="fas fa-cookie-bite title-icon"></i> Cookie Cutter Generator</h1>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class="flashes">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="/process_svg" enctype="multipart/form-data" id="cutterForm">
+            <h2>Design Your Cutter</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="svg_file"><i class="fas fa-upload icon"></i> Upload SVG File:</label>
+                    <input type="file" name="svg_file" id="svg_file" accept=".svg" required>
+                </div>
+                <div class="form-group">
+                    <label for="wall_thickness"><i class="fas fa-grip-lines-vertical icon"></i> Wall Thickness (mm):</label>
+                    <input type="number" name="wall_thickness" id="wall_thickness" value="0.75" step="0.01" min="0.1">
+                </div>
+                <div class="form-group">
+                    <label for="wall_height"><i class="fas fa-arrows-alt-v icon"></i> Wall Height (mm):</label>
+                    <input type="number" name="wall_height" id="wall_height" value="6.0" step="0.1" min="1.0">
+                </div>
+                <div class="form-group">
+                    <label for="outer_wall_height"><i class="fas fa-ruler-vertical icon"></i> Outer Wall Height (mm):</label>
+                    <input type="number" name="outer_wall_height" id="outer_wall_height" value="3.0" step="0.1" min="0.0">
+                    <small class="form-text">Height of the outer perimeter wall above the inner walls.</small>
+                </div>
+                <div class="form-group">
+                    <label for="base_thickness"><i class="fas fa-layer-group icon"></i> Base Thickness (mm):</label>
+                    <input type="number" name="base_thickness" id="base_thickness" value="2.0" step="0.1" min="0.5">
+                </div>
+                <div class="form-group">
+                    <label for="base_margin"><i class="fas fa-expand-arrows-alt icon"></i> Base Margin (mm):</label>
+                    <input type="number" name="base_margin" id="base_margin" value="2.0" step="0.1" min="0.0">
+                </div>
+                <div class="form-group">
+                    <label for="curve_resolution"><i class="fas fa-bezier-curve icon"></i> Curve Resolution (mm):</label>
+                    <input type="number" name="curve_resolution" id="curve_resolution" value="0.2" step="0.01" min="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="internal_bridge_density"><i class="fas fa-network-wired icon"></i> Internal Bridge Density (0.0-1.0):</label>
+                    <input type="number" name="internal_bridge_density" id="internal_bridge_density" value="0.2" step="0.01" min="0.0" max="1.0">
+                </div>
+                <div class="form-group">
+                    <label for="num_outer_bridges_per_inner_poly"><i class="fas fa-project-diagram icon"></i> Outer Bridges per Inner Poly:</label>
+                    <input type="number" name="num_outer_bridges_per_inner_poly" id="num_outer_bridges_per_inner_poly" value="4" step="1" min="0">
+                </div>
+                <div class="form-group full-width">
+                    <label for="target_x_sizes"><i class="fas fa-ruler-horizontal icon"></i> Target Widths (mm, comma-separated):</label>
+                    <input type="text" name="target_x_sizes" id="target_x_sizes" value="40, 50, 60, 70, 80, 90, 100">
+                </div>
+                <div class="form-group full-width">
+                    <label for="cutout_threshold_ref"><i class="fas fa-cut icon"></i> Reference Cutout Infill Threshold (mm² for 80mm cutter):</label>
+                    <input type="number" name="cutout_threshold_ref" id="cutout_threshold_ref" value="10.0" step="0.1" min="0.0">
+                </div>
+                <div class="form-group full-width checkbox-group">
+                    <input type="checkbox" name="enable_proportional_scaling" id="enable_proportional_scaling" value="y" checked>
+                    <label for="enable_proportional_scaling"><i class="fas fa-balance-scale icon"></i> Enable Proportional Scaling of Cutout Infill Threshold</label>
+                </div>
+            </div>
+            <button type="submit">Generate Cookie Cutters</button>
+        </form>
+
+        <div class="documentation-links">
+            <h2>Documentation</h2>
+            <a href="{{ url_for('static', filename='user_guide.html') }}"><i class="fas fa-book"></i> User Guide</a>
+            <a href="{{ url_for('static', filename='code_documentation.html') }}"><i class="fas fa-code"></i> Code Documentation</a>
+        </div>
+    </div>
+
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <p>Generating your cookie cutters... This may take a moment.</p>
+    </div>
+
+    <script>
+        document.getElementById('cutterForm').addEventListener('submit', function() {
+            document.getElementById('loading-overlay').style.display = 'flex';
+        });
+    </script>
+</body>
+</html>

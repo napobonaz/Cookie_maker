@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* Very light gray background */
+            color: #1e293b; /* Darker gray text for better readability */
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow */
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+        h1, h2, h3, h4 {
+            font-weight: 700;
+            color: #0f172a; /* Even darker text for headings */
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        h1 { font-size: 2.5rem; }
+        h2 { font-size: 2rem; border-bottom: 2px solid #cbd5e0; padding-bottom: 0.5rem; } /* Lighter border */
+        h3 { font-size: 1.5rem; }
+        h4 { font-size: 1.25rem; }
+        p, ul, ol {
+            margin-bottom: 1rem;
+            color: #334155; /* Consistent text color */
+        }
+        ul, ol {
+            padding-left: 1.5rem;
+        }
+        li {
+            margin-bottom: 0.5rem;
+        }
+        code {
+            background-color: #e5e7eb; /* Lighter background for inline code */
+            color: #1e293b; /* Darker code text */
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-family: 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background-color: #2d3748; /* Dark background for code blocks */
+            color: #f9fafb; /* Very light text for code blocks */
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+        a {
+            color: #2563eb; /* More vibrant blue for links */
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+            cursor: pointer;
+            text-align: center;
+        }
+        .btn-secondary {
+            background-color: #64748b; /* Slate-500 for secondary button */
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #475569; /* Slate-600 on hover */
+            transform: translateY(-1px);
+        }
+        .function-header {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-top: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+        .param-list {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .param-name {
+            font-weight: 600;
+            color: #374151;
+        }
+        .return-value {
+            font-style: italic;
+            color: #4a5568;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">SVG to STL Cookie Cutter Converter - Code Documentation</h1>
+
+        <section>
+            <h2>Overview</h2>
+            <p>This document provides detailed information about the Python functions used in the Flask application (<code>app.py</code>) for converting SVG designs into 3D printable cookie cutter STL files. It outlines the purpose, parameters, and return values of each key function.</p>
+        </section>
+
+        <section>
+            <h2>Global Constants</h2>
+            <ul>
+                <li><code>REFERENCE_TARGET_X_SIZE</code>: Defines the reference X-size (width) of the cookie cutter in millimeters (mm). This constant is used as a baseline for proportional scaling calculations, especially when determining the threshold for filling small internal cutouts. Currently set to <code>80.0</code> mm.</li>
+                <li><code>DEFAULT_REFERENCE_CUTOUT_AREA_THRESHOLD</code>: Specifies the default area threshold in square millimeters (mm²) for identifying small internal cutouts (holes) within the SVG design for the reference size (defined by <code>REFERENCE_TARGET_X_SIZE</code>). Any closed area within the SVG smaller than this threshold will be considered a cutout to be filled in the generated STL. The default value is <code>10.0</code> mm².</li>
+                <li><code>ALLOWED_EXTENSIONS</code>: A set containing the file extensions that are allowed for upload. Currently, it only includes <code>{'svg'}</code>, ensuring that only SVG files can be processed.</li>
+                <li><code>app.config['UPLOAD_FOLDER']</code>: Specifies the directory where uploaded SVG files are temporarily stored on the server. Currently set to <code>'uploads'</code>.</li>
+                <li><code>app.config['OUTPUT_FOLDER']</code>: Defines the directory where the generated STL files and preview images are saved. Currently set to <code>'output'</code>.</li>
+                <li><code>app.secret_key</code>: A secret key used by Flask for session management and security features like flash messages. It is currently set to <code>'supersecretkey'</code>.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Utility Functions</h2>
+
+            <h3 class="function-header"><code>allowed_file(filename)</code></h3>
+            <p>Checks if a given filename has an allowed SVG extension.</p>
+            <pre><code class="language-python">def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS</code></pre>
+            <p><strong>Parameters:</strong></p>
+            <ul class="param-list">
+                <li><span class="param-name">filename</span> (str): The name of the file to check.</li>
+            </ul>
+            <p><strong>Returns:</strong></p>
+            <p><span class="return-value">bool</span>: <code>True</code> if the filename has a '.svg' extension (case-insensitive), <code>False</code> otherwise.</p>
+
+            <h3 class="function-header"><code>extrude_any_shape(geometry, height)</code></h3>
+            <p>Extrudes a Shapely <code>Polygon</code> or <code>MultiPolygon</code> object into a 3D mesh using the <code>trimesh</code> library's <code>extrude_polygon</code> function. It handles both single polygons and multiple polygons within a <code>MultiPolygon</code> by iterating through them and concatenating the resulting meshes.</p>
+            <pre><code class="language-python">def extrude_any_shape(geometry, height):
+    meshes = []
+    if isinstance(geometry, Polygon):
+        meshes.append(extrude_polygon(geometry, height=height))
+    elif isinstance(geometry, MultiPolygon):
+        for poly in geometry.geoms:
+            meshes.append(extrude_polygon(poly, height=height))
+    else:
+        raise ValueError("Nicht unterstützter Geometrietyp für die Extrusion.")
+    return trimesh.util.concatenate(meshes)</code></pre>
+            <p><strong>Parameters:</strong></p>
+            <ul class="param-list">
+                <li><span class="param-name">geometry</span> (<code>shapely.geometry.Polygon</code> or <code>shapely.geometry.MultiPolygon</code>): The 2D shape to extrude.</li>
+                <li><span class="param-name">height</span> (float): The height of the extrusion in millimeters (mm).</li>
+            </ul>
+            <p><strong>Returns:</strong></p>
+            <p><span class="return-value">trimesh.Trimesh</span>: A 3D mesh representing the extruded shape.</p>
+
+            <h3 class="function-header"><code>sample_svg_path(path_segment, resolution=0.5)</code></h3>
+            <p>Samples points along an SVG path segment (a part of an SVG path) to convert the continuous vector curve into a series of discrete (x, y) coordinates. This is essential for converting SVG paths into a format that Shapely can use to create polygons.</p>
+            <pre><code class="language-python">def sample_svg_path(path_segment, resolution=0.5):
+    length = path_segment.length()
+    num_samples = max(int(length / resolution), 2)
+    return [path_segment.point(t) for t in [i / (num_samples - 1) for i in range(num_samples)]]</code></pre>
+            <p><strong>Parameters:</strong></p>
+            <ul class="param-list">
+                <li><span class="param-name">path_segment</span> (<code>svgpathtools.path.PathSegment</code>): A segment of an SVG path (e.g., Line, CubicBezier, QuadraticBezier, Arc).</li>
+                <li><span class="param-name">resolution</span> (float, optional): The density of sampled points. A smaller value results in more points and a smoother approximation of the curve. Defaults to <code>0.5</code>.</li>
+            </ul>
+            <p><strong>Returns:</strong></p>
+            <p><span class="return-value">list</span> of <code>complex</code>: A list of complex numbers representing the sampled points (x + jy) along the path segment.</p>
+
+            <h3 class="function-header"><code>parse_svg_length(length_str, dpi=96)</code></h3>
+            <p>Parses an SVG length string, which can include units like 'px', 'mm', 'cm', 'in', 'pt', 'pc', or no unit (assumed to be pixels). It converts the length to a numerical value in pixels based on the provided Dots Per Inch (DPI).</p>
+            <pre><code class="language-python">def parse_svg_length(length_str, dpi=96):
+    units = {
+        'px': 1,
+        'mm': dpi / 25.4,
+        'cm': dpi / 2.54,
+        'in': dpi,
+        'pt': dpi / 72,
+        'pc': dpi / 6,
+        '': 1
+    }
+    match = re.fullmatch(r"([0-9.+-eE]+)([a-z%]*)", length_str.strip())
+    if not match:
+        try:
+            return float(length_str)
+        except ValueError:
+            raise ValueError(f"SVG-Länge konnte nicht analysiert werden: {length_str}")
+    value, unit = match.groups()
+    return float(value) * units.get(unit.lower(), 1)</code></pre>
+            <p><strong>Parameters:</strong></p>
+            <ul class="param-list">
+                <li><span class="param-name">length_str</span> (str): The SVG length string to parse (e.g., "100px", "20mm").</li>
+                <li><span class="param-name">dpi</span> (int, optional): The Dots Per Inch to use for unit conversions. Defaults to <code>96</code>.</li>
+            </ul>
+            <p><strong>Returns:</strong></p>
+            <p><span class="return-value">float</span>: The parsed length in pixels.</p>
+
+            <h3 class="function-header"><code>parse_transform(transform_string)</code></h3>
+            <p>Parses the SVG <code>transform</code> attribute string into a list of individual transformations. It identifies and extracts the type and numerical values for <code>translate</code>, <code>scale</code>, <code>rotate</code>, and <code>matrix</code> transformations.</p>
+            <pre><code class="language-python">def parse_transform(transform_string):
+    transforms = []
+    if not transform_string:
+        return transforms
+    transform_regex = re.compile(r'(translate|scale|rotate|matrix)\(([^)]*)\)')
+    for match in transform_regex.finditer(transform_string):
+        transform_type = match.group(1)
+        values_str = match.group(2)
+        values = [float(v) for v in values_str.split(',')]
+        if transform_type == "translate":
+            transforms.append(("translate", values[0], values[1] if len(values) > 1 else 0))
+        elif transform_type == "scale":
+            transforms.append(("scale", values[0], values[1] if len(values) > 1 else values[0]))
+        elif transform_type == "rotate":
+            if len(values) == 1:
+                transforms.append(("rotate", values[0]))
+            elif len(values) == 3:
+                transforms.append(("rotate", values[0], values[1], values[2]))
+            else:
+                print(f"Warnung: Unerwartete Anzahl von Werten für die Rotations-Transformation: {values}")
+        elif transform_type == "matrix":
+            if len(values) == 6:
+                transforms.append(("matrix", values))
+            else:
+                print(f"Warnung: Unerwartete Anzahl von Werten für die Matrix-Transformation: {values}")
+    return transforms</code></pre>
+            <p><strong>Parameters:</strong></p>
+            <ul class="param-list">
+                <li><span class="param-name">transform_string</span> (str): The SVG <code>transform</code> attribute string.</li>
+            </ul>
+            <p><strong>Returns:</strong></p>
+            <p><span class="return-value">list</span> of <code>tuple</code>: A list of tuples, where each tuple represents a transformation and contains the transform type (string) followed by its numerical parameters.</p>
+
+            <h3 class="function-header"><code>apply_transform(x, y, transform_type, values)</code></h3>
+            <p>Applies a single SVG transformation (translate, scale, rotate, or matrix) to a given (x, y) coordinate pair. This is used to correctly interpret SVG path data that might have transformations applied.</p>
+            <pre><code class="language-python">def apply_transform(x, y, transform_type, values):
+    if transform_type == "translate":
+        tx, ty = values[0], values[1]
+        return x + tx, y + ty
+    elif transform_type == "scale":
+        sx, sy = values[0], values[1]
+        return x * sx, y * sy
+    elif transform_type == "rotate":
+        angle_rad = math.radians(values[0])
+        cos_theta = math.cos(angle_rad)
+        sin_theta = math.sin(angle_rad)
+        if len(values) == 3: # Rotate around a specific point (cx, cy)
+            cx, cy = values[1], values[2]
+            translated_x = x - cx
+            translated_y = y - cy
+            rotated_x = translated_x * cos_theta - translated_y * sin_theta
+            rotated_y = translated_x * sin_theta + translated_y * cos_theta
+            return rotated_x + cx, rotated_y + cy
+        else: # Rotate around origin (0,0)
+            return x * cos_theta - y * sin_theta, x * sin_theta + y * cos_theta
+    elif transform_type == "matrix":
+        a, b, c, d, e, f = values
+        return a * x + c * y + e, b * x + d * y + f
+    return x, y</code></pre>
+            <p><strong>Parameters:</strong></p>
+            <ul class="param-list">
+                <li><span class="param-name">x</span> (float): The x-coordinate.</li>
+                <li><span class="param-name">y</span> (float): The y-coordinate.</li>
+                <li><span class="param-name">transform_type</span> (str): The type of transformation to apply ('translate', 'scale', 'rotate', 'matrix').</li>
+                <li><span class="param-name">values</span> (list of float): The numerical parameters for the transformation.</li>
+            </ul>
+            <p><strong>Returns:</strong></p>
+            <p><span class="return-value">tuple</span> of <code>float</code>: The transformed (x, y) coordinates.</p>
+
+            <h3 class="function-header"><code>generate_bridge_connections(polygons, extra_bridge_factor=0.0)</code></h3>
+            <p>Generates structural bridges (<code>LineString</code> objects) between a list of Shapely polygons. It uses a Minimum Spanning Tree (MST) approach based on the nearest points between polygons to ensure connectivity of all parts. Additionally, it can add extra bridges based on the <code>extra_bridge_factor</code> to increase the structural integrity of the design.</p>
+            <pre><code class="language-python">def generate_bridge_connections(polygons, extra_bridge_factor=0.0):
+    if len(polygons) <= 1:
+        return []
+    all_potential_bridges = []
+    polygon_indices = {poly: i for i, poly in enumerate(polygons)}
+    for i in range(len(polygons)):
+        for j in range(i + 1, len(polygons)):
+            poly1 = polygons[i]
+            poly2 = polygons[j]
+            p1_nearest, p2_nearest = nearest_points(poly1, poly2)
+            dist = p1_nearest.distance(p2_nearest)
+            all_potential_bridges.append({'u': i, 'v': j, 'weight': dist, 'p1': p1_nearest, 'p2': p2_nearest})
+    all_potential_bridges.sort(key=lambda x: x['weight'])
+    mst_bridges = []
+    mst_edges_set = set()
+    parent = list(range(len(polygons)))
+    def find(i):
+        if parent[i] == i:
+            return i
+        parent[i] = find(parent[i])
+        return parent[i]
+    def union(i, j):
+        root_i = find(i)
+        root_j = find(j)
+        if root_i != root_j:
+            parent[root_i] = root_j
+            return True
+        return False
+    num_components = len(polygons)
+    for bridge_data in all_potential_bridges:
+        u, v, weight, p1, p2 = bridge_data['u'], bridge_data['v'], bridge_data['weight'], bridge_data['p1'], bridge_data['p2']
+        if union(u, v):
+            mst_bridges.append(LineString([p1, p2]))
+            mst_edges_set.add(tuple(sorted((u, v))))
+            num_components -= 1
+            if num_components == 1:
+                break
+    additional_bridges = []
+    num_additional_to_add = int(len(all_potential_bridges) * extra_bridge_factor)
+    added_count = 0
+    for bridge_data in all_potential_bridges:
+        u, v, weight, p1, p2 = bridge_data['u'], bridge_data['v'], bridge_data['weight'], bridge_data['p1'], bridge_data['p2']
+        if tuple(sorted((u, v))) not in mst_edges_set:
+            additional_bridges.append(LineString([p1, p2]))
+            added_count += 1
+            if added_count >= num_additional_to_add:
+                break
+    return mst_bridges + additional_bridges</code></pre>
+            <p><strong>Parameters:</strong></p>
+            <ul class="param-list">
+                <li><span class="param-name">polygons</span> (<code>list</code> of <code>shapely.geometry.Polygon</code>): A list of Shapely Polygon objects representing the parts of the cutter that need to be connected.</li>
+                <li><span class="param-name">extra_bridge_factor</span> (float, optional): A factor between 0.0 and 1.0. If greater than 0, additional bridges beyond the essential Minimum Spanning Tree (MST) connections will be added to enhance stability. Defaults to <code>0.0</code>.</li>
+            </ul>
+            <p><strong>Returns:</strong></p>
+            <p><span class="return-value">list</span> of <code>shapely.geometry.LineString</code>: A list of LineString objects representing the generated bridges.</p>
+
+            <h3 class="function-header"><code>ensure_minimum_bridges(outer_poly, inner_polys, num_points_on_inner_perimeter=4)</code></h3>
+            <p>Creates a specified minimum number of bridges connecting inner polygons to the main outer polygon. It samples points along the inner polygon's perimeter and finds the nearest point on the outer polygon to form robust connections. This is particularly useful for stabilizing internal features of the cookie cutter.</p>
+            <pre><code class="language-python">def ensure_minimum_bridges(outer_poly, inner_polys, num_points_on_inner_perimeter=4):
+    bridges = []
+    used_pairs = set()
+    actual_inner_polys = [p for p in inner_polys if not p.equals(outer_poly)]
+    for inner in actual_inner_polys:
+        perimeter_length = inner.exterior.length
+        if perimeter_length == 0:
+            continue
+        step_length = perimeter_length / num_points_on_inner_perimeter
+        current_distance = 0.0
+        for i in range(num_points_on_inner_perimeter):
+            p_inner = inner.exterior.interpolate(current_distance)
+            p_outer, _ = nearest_points(outer_poly, p_inner)
+            bridge = LineString([p_inner, p_outer])
+            if not bridge.is_empty and bridge.length > 1e-6:
+                coords = sorted([(round(p_inner.x, 3), round(p_inner.y, 3)), (round(p_outer.x, 3), round(p_outer.y, 3))])
+                key = tuple(coords[0] + coords[1])
+                if key not in used_pairs:
+                    bridges.append(bridge)
+                    used_pairs.add(key)
+            current_distance += step_length
+    return bridges</code></pre>
+            <p><strong>Parameters:</strong></p>
+            <ul class="param-list">
+                <li><span class="param-name">outer_poly</span> (<code>shapely.geometry.Polygon</code>): The main outer polygon of the cookie cutter.</li>
+                <li><span class="param-name">inner_polys</span> (<code>list</code> of <code>shapely.geometry.Polygon</code>): A list of Shapely Polygon objects representing the inner parts of the cutter.</li>
+                <li><span class="param-name">num_points_on_inner_perimeter</span> (int, optional): The number of points to sample on the perimeter of each inner polygon to create bridges. Defaults to <code>4</code>.</li>
+            </ul>
+            <p><strong>Returns:</strong></p>
+            <p><span class="return-value">list</span> of <code>shapely.geometry.LineString</code>: A list of LineString objects representing the generated bridges connecting inner polygons to the outer polygon.</p>
+
+            <h3 class="function-header"><code>fill_small_cutouts(polygon, area_threshold=5.0)</code></h3>
+            <p>Processes a Shapely <code>Polygon</code> or <code>MultiPolygon</code> to remove (fill in) interior holes (cutouts) whose area is smaller than the specified <code>area_threshold</code>. This is useful for simplifying designs or preventing very small, unprintable details.</p>
+            <pre><code class="language-python">def fill_small_cutouts(polygon, area_threshold=5.0):
+    removed_hole_geometries = []
+    def filter_holes(poly):
+        nonlocal removed_hole_geometries
+        valid = []
+        for ring in poly.interiors:
+            hole_poly = Polygon(ring)
+            if hole_poly.area < area_threshold:
+                removed_hole_geometries.append(hole_poly)
+            else:
+                valid.append(ring)
+        return Polygon(poly.exterior, valid)
+
+    if isinstance(polygon, Polygon):
+        cleaned_poly = filter_holes(polygon)
+        return cleaned_poly, removed_hole_geometries
+    elif isinstance(polygon, MultiPolygon):
+        new_polys = []
+        removed_holes_multi = []
+        for poly in polygon.geoms:
+            cleaned, removed = filter_holes(poly)
+            new_polys.append(cleaned)
+            removed_holes_multi.extend(removed)
+        return MultiPolygon(new_polys), removed_holes_multi
+    else:
+        return polygon, removed_hole_geometries</code></pre>
+            <p><strong>Parameters:</strong></p>
+            <ul class="param-list">
+                <li><span class="param-name">polygon</span> (<code>shapely.geometry.Polygon</code> or <code>shapely.geometry.MultiPolygon</code>): The input polygon(s) to process for small cutouts.</li>
+                <li><span class="param-name">area_threshold</span> (float, optional): The maximum area (in mm²) for a hole to be considered "small" and filled. Defaults to <code>5.0</code>.</li>
+            </ul>
+            <p><strong>Returns:</strong></p>
+            <p><span class="return-value">tuple</span>: A tuple containing:</p>
+            <ul>
+                <li>The modified <code>shapely.geometry.Polygon</code> or <code>MultiPolygon</code> with small holes filled.</li>
+                <li>A <code>list</code> of <code>shapely.geometry.Polygon</code> objects representing the geometries of the holes that were removed/filled.</li>
+            </ul>
+
+            <h3 class="function-header"><code>list_internal_cutouts(normalized_outlines)</code></h3>
+            <p>Identifies and lists the areas of internal cutouts (holes) from a set of normalized SVG outlines. This function is used to analyze the original SVG design's holes before any buffering or filling operations, providing a clear view of the design's internal structure.</p>
+            <pre><code class="language-python">def list_internal_cutouts(normalized_outlines):
+    polygons = []
+    for outline in normalized_outlines:
+        try:
+            poly = Polygon(outline)
+            if poly.is_valid and not poly.is_empty:
+                polygons.append(poly)
+        except Exception as e:
+            print(f"Warnung: Polygon konnte aus Umriss für Ausschnittserkennung nicht gebildet werden (übersprungen): {e}")
+            continue
+    if not polygons:
+        return []
+    valid_polygons = [p for p in polygons if isinstance(p, Polygon)]
+    if not valid_polygons:
+        return []
+    main_outer_poly = max(valid_polygons, key=lambda p: p.area)
+    cutout_areas = []
+    for poly in valid_polygons:
+        if poly.equals(main_outer_poly):
+            for interior_ring in poly.interiors:
+                hole_poly = Polygon(interior_ring)
+                cutout_areas.append(hole_poly.area)
+        else:
+            if main_outer_poly.contains(poly):
+                cutout_areas.append(poly.area)
+                for interior_ring in poly.interiors:
+                    hole_poly = Polygon(interior_ring)
+                    cutout_areas.append(hole_poly.area)
+    return cutout_areas</code></pre>
+            <p><strong>Parameters:</strong></p>
+            <ul class="param-list">
+                <li><span class="param-name">normalized_outlines</span> (<code>list</code> of <code>shapely.geometry.LineString</code>): A list of normalized (translated to origin) LineString objects representing the outlines from the SVG.</li>
+            </ul>
+            <p><strong>Returns:</strong></p>
+            <p><span class="return-value">list</span> of <code>float</code>: A list containing the areas (in mm²) of the detected internal cutouts.</p>
+
+            <h3 class="function-header"><code>get_outer_polygon_by_containment(polygons)</code></h3>
+            <p>Identifies the main outer polygon from a list of Shapely polygons. It determines the outer polygon by finding the one that contains the most other polygons. In case of a tie in the number of contained polygons, the polygon with the larger area is chosen.</p>
+            <pre><code class="language-python">def get_outer_polygon_by_containment(polygons):
+    if not polygons:
+        return None
+
+    candidate_outer_poly = max(polygons, key=lambda p: p.area)
+    max_contained_count = sum(1 for p in polygons if candidate_outer_poly.contains(p) and not p.equals(candidate_outer_poly))
+
+    for current_poly in polygons:
+        current_contained_count = sum(1 for p in polygons if current_poly.contains(p) and not p.equals(current_poly))
+        
+        if current_contained_count > max_contained_count:
+            max_contained_count = current_contained_count
+            candidate_outer_poly = current_poly
+        elif current_contained_count == max_contained_count:
+            if current_poly.area > candidate_outer_poly.area:
+                candidate_outer_poly = current_poly
+    return candidate_outer_poly</code></pre>
+            <p><strong>Parameters:</strong></p>
+            <ul class="param-list">
+                <li><span class="param-name">polygons</span> (<code>list</code> of <code>shapely.geometry.Polygon</code>): A list of Shapely Polygon objects to analyze.</li>
+            </ul>
+            <p><strong>Returns:</strong></p>
+            <p><span class="return-value">shapely.geometry.Polygon</span> or <code>None</code>: The identified outer polygon, or <code>None</code> if the input list is empty.</p>
+
+            <h3 class="function-header"><code>get_outer_polygon_by_origin_enclosure(polygons)</code></h3>
+            <p>Identifies the main outer polygon by checking which polygon encloses the origin (0, 0) after normalization. If multiple polygons enclose the origin, the largest one by area is chosen. If no polygon encloses the origin, it falls back to selecting the polygon with the largest area.</p>
+            <pre><code class="language-python">def get_outer_polygon_by_origin_enclosure(polygons):
+    if not polygons:
+        return None
+
+    origin = Point(0, 0)
+    enclosing_polygons = [poly for poly in polygons if poly.contains(origin)]
+
+    if enclosing_polygons:
+        return max(enclosing_polygons, key=lambda p: p.area)
+    else:
+        return max(polygons, key=lambda p: p.area)</code></pre>
+            <p><strong>Parameters:</strong></p>
+            <ul class="param-list">
+                <li><span class="param-name">polygons</span> (<code>list</code> of <code>shapely.geometry.Polygon</code>): A list of Shapely Polygon objects to analyze. These polygons are expected to be normalized (translated so their bottom-left is near the origin).</li>
+            </ul>
+            <p><strong>Returns:</strong></p>
+            <p><span class="return-value">shapely.geometry.Polygon</span> or <code>None</code>: The identified outer polygon, or <code>None</code> if the input list is empty.</p>
+
+            <h3 class="function-header"><code>plot_cutter_preview(normalized_outlines, removed_hole_geometries, wall_thickness, current_cutout_threshold, target_x, output_base_name, outer_base_shape_buffered, output_path)</code></h3>
+            <p>Generates a 2D PNG preview image of the cookie cutter design. It visualizes the cutter walls, the outer base, and highlights which internal cutouts are filled (red) or kept (green dashed border), along with their areas. This provides a quick visual check of the generated design.</p>
+            <pre><code class="language-python">def plot_cutter_preview(normalized_outlines, removed_hole_geometries, wall_thickness, current_cutout_threshold, target_x, output_base_name, outer_base_shape_buffered, output_path):
+    fig, ax = plt.subplots(figsize=(10, 10))
+
+    if outer_base_shape_buffered:
+        x, y = outer_base_shape_buffered.exterior.xy
+        ax.fill(x, y, color='lightgray', alpha=0.5, label='Äußere Basis')
+        for interior in outer_base_shape_buffered.interiors:
+            x, y = interior.xy
+            ax.fill(x, y, color='white', alpha=0.5)
+
+    all_wall_polygons_for_drawing = []
+    for outline in normalized_outlines:
+        wall_poly = outline.buffer(wall_thickness / 2.0, cap_style=1, join_style=1, resolution=16)
+        wall_poly = wall_poly.simplify(0.001)
+        if wall_poly.is_valid and not wall_poly.is_empty:
+            all_wall_polygons_for_drawing.append(wall_poly)
+
+    for wall_shape_to_draw in all_wall_polygons_for_drawing:
+        x, y = wall_shape_to_draw.exterior.xy
+        ax.plot(x, y, color='black', linewidth=1.5, label='Ausstecherwand' if wall_shape_to_draw == all_wall_polygons_for_drawing[0] else "")
+        
+        for interior_ring in wall_shape_to_draw.interiors:
+            hole_candidate = Polygon(interior_ring)
+            is_removed_hole = False
+            for removed_poly in removed_hole_geometries:
+                if hole_candidate.equals(removed_poly) or hole_candidate.buffer(1e-6).intersects(removed_poly.buffer(1e-6)):
+                    is_removed_hole = True
+                    break
+            if not is_removed_hole:
+                x_int, y_int = interior_ring.xy
+                ax.plot(x_int, y_int, color='black', linestyle=':', linewidth=0.8)
+
+    for hole_poly in removed_hole_geometries:
+        if isinstance(hole_poly, Polygon):
+            x, y = hole_poly.exterior.xy
+            ax.fill(x, y, color='red', alpha=0.7, label='Gefüllter Ausschnitt' if hole_poly == removed_hole_geometries[0] else "")
+            if hole_poly.centroid.is_valid:
+                ax.text(hole_poly.centroid.x, hole_poly.centroid.y, f"{hole_poly.area:.1f}",
+                        fontsize=10, ha='center', va='center', color='black', weight='bold',
+                        bbox=dict(facecolor='white', alpha=0.6, edgecolor='none', boxstyle='round,pad=0.2'))
+        elif isinstance(hole_poly, MultiPolygon):
+            for part in hole_poly.geoms:
+                x, y = part.exterior.xy
+                ax.fill(x, y, color='red', alpha=0.7, label='Gefüllter Ausschnitt' if hole_poly == removed_hole_geometries[0] else "")
+                if part.centroid.is_valid:
+                    ax.text(part.centroid.x, part.centroid.y, f"{part.area:.1f}",
+                            fontsize=10, ha='center', va='center', color='black', weight='bold',
+                            bbox=dict(facecolor='white', alpha=0.6, edgecolor='none', boxstyle='round,pad=0.2'))
+
+    handles, labels = ax.get_legend_handles_labels()
+    unique_labels = dict(zip(labels, handles))
+    ax.legend(unique_labels.values(), unique_labels.keys())
+    ax.set_aspect('equal', adjustable='box')
+    ax.set_title(f"Ausstecher-Vorschau für {target_x}mm (Schwelle: {current_cutout_threshold:.2f} mm²)")
+    ax.set_xlabel("X (mm)")
+    ax.set_ylabel("Y (mm)")
+    ax.set_xlim([0, 120])
+    ax.set_ylim([0, 120])
+    plt.grid(True, linestyle=':', alpha=0.6)
+    plt.tight_layout()
+    
+    try:
+        preview_filename = os.path.join(output_path, f"{output_base_name}_cutter_preview_{int(target_x)}mm.png")
+        plt.savefig(preview_filename, dpi=200)
+    except Exception as e:
+        print(f"Error saving preview image: {e}")
+        preview_filename = "error_preview.png"
+    finally:
+        plt.close()
+    
+    return os.path.basename(preview_filename)</code></pre>
+            <p><strong>Parameters:</strong></p>
+            <ul class="param-list">
+                <li><span class="param-name">normalized_outlines</span> (<code>list</code> of <code>shapely.geometry.LineString</code>): The normalized SVG outlines used to generate the cutter walls.</li>
+                <li><span class="param-name">removed_hole_geometries</span> (<code>list</code> of <code>shapely.geometry.Polygon</code>): A list of the actual Shapely Polygon objects that were identified as small cutouts and will be filled in the STL.</li>
+                <li><span class="param-name">wall_thickness</span> (float): The thickness of the cutter walls in mm.</li>
+                <li><span class="param-name">current_cutout_threshold</span> (float): The area threshold (in mm²) used for determining which cutouts are filled for the current cutter size.</li>
+                <li><span class="param-name">target_x</span> (float): The target X-dimension (width) of the current cutter being generated.</li>
+                <li><span class="param-name">output_base_name</span> (str): The base name for the output preview file.</li>
+                <li><span class="param-name">outer_base_shape_buffered</span> (<code>shapely.geometry.Polygon</code> or <code>None</code>): The buffered Shapely Polygon representing the outer base of the cutter, if it exists.</li>
+                <li><span class="param-name">output_path</span> (str): The directory path where the preview image should be saved.</li>
+            </ul>
+            <p><strong>Returns:</strong></p>
+            <p><span class="return-value">str</span>: The filename of the generated 2D preview image.</p>
+
+            <h3 class="function-header"><code>generate_stl_preview_image(mesh, output_path, output_base_name, target_x)</code></h3>
+            <p>Generates a 2D PNG preview image of the final 3D STL mesh from an isometric view. It uses the <code>vedo</code> library for off-screen rendering, applies a slight rotation for better visibility, and saves the image. This function is crucial for providing a visual representation of the generated 3D model.</p>
+            <pre><code class="language-python">def generate_stl_preview_image(mesh, output_path, output_base_name, target_x):
+    if mesh.is_empty:
+        print("Warning: Cannot generate STL preview for an empty mesh.")
+        return "empty_mesh_preview.png"
+
+    try:
+        vedo_mesh = vedo.Mesh([mesh.vertices, mesh.faces])
+        vedo_mesh.color('lightgrey')
+        vedo_mesh.rotate_z(30)
+        vedo_mesh.rotate_x(-15) 
+
+        plotter = vedo.Plotter(offscreen=True, size=(3200, 3200))
+        plotter.add(vedo_mesh)
+        plotter.reset_camera()
+
+        image_data = plotter.screenshot(asarray=True)
+        plotter.close()
+
+        img = Image.fromarray(image_data)
+
+        stl_preview_filename = f"{output_base_name}_stl_preview_{int(target_x)}mm.png"
+        full_path = os.path.join(output_path, stl_preview_filename)
+        img.save(full_path)
+        
+        print(f"🖼️ STL preview saved as: {stl_preview_filename}")
+        return stl_preview_filename
+
+    except ImportError as e:
+        print(f"Error generating STL preview image: {e}. This often means 'vedo' or 'Pillow' is not installed.")
+        print("Please ensure you have 'vedo' and 'Pillow' installed using: pip install vedo")
+        return "error_stl_preview.png"
+    except Exception as e:
+        print(f"Error generating STL preview image: {e}")
+        return "error_stl_preview.png"</code></pre>
+            <p><strong>Parameters:</strong></p>
+            <ul class="param-list">
+                <li><span class="param-name">mesh</span> (<code>trimesh.Trimesh</code>): The 3D mesh object to render.</li>
+                <li><span class="param-name">output_path</span> (str): The directory path where the preview image should be saved.</li>
+                <li><span class="param-name">output_base_name</span> (str): The base name for the output preview file.</li>
+                <li><span class="param-name">target_x</span> (float): The target X-dimension (width) of the current cutter, used for naming the output file.</li>
+            </ul>
+            <p><strong>Returns:</strong></p>
+            <p><span class="return-value">str</span>: The filename of the generated 3D STL preview image.</p>
+        </section>
+
+        <section>
+            <h2>Flask Routes</h2>
+            <h3><code>/</code> (GET)</h3>
+            <p>Renders the main <code>index.html</code> page, which contains the form for uploading SVG files and setting parameters.</p>
+
+            <h3><code>/process_svg</code> (POST)</h3>
+            <p>Handles the form submission. It processes the uploaded SVG, applies transformations, generates the 3D model, creates STL files, and generates 2D and 3D preview images. It then redirects to the <code>result.html</code> page to display the generated files.</p>
+
+            <h3><code>/download/&lt;filename&gt;</code> (GET)</h3>
+            <p>Allows users to download the generated STL files.</p>
+
+            <h3><code>/preview/&lt;filename&gt;</code> (GET)</h3>
+            <p>Serves the generated 2D and 3D preview images to be displayed on the <code>result.html</code> page.</p>
+        </section>
+
+        <div class="text-center mt-8">
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                Back to Home
+            </a>
+        </div>
+    </div>
+</body>
+</html>

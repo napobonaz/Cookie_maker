@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            color: #334155;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+        h1, h2, h3, h4 {
+            font-weight: 700;
+            color: #1a202c;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        h1 { font-size: 2.5rem; }
+        h2 { font-size: 2rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
+        h3 { font-size: 1.5rem; }
+        h4 { font-size: 1.25rem; }
+        p, ul, ol {
+            margin-bottom: 1rem;
+        }
+        ul, ol {
+            padding-left: 1.5rem;
+        }
+        li {
+            margin-bottom: 0.5rem;
+        }
+        code {
+            background-color: #e2e8f0;
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-family: 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background-color: #2d3748;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+        a {
+            color: #3b82f6;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+            cursor: pointer;
+            text-align: center;
+        }
+        .btn-secondary {
+            background-color: #6b7280; /* Gray-500 */
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #4b5563; /* Gray-600 */
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">SVG to STL Cookie Cutter Converter - Code Documentation</h1>
+
+        <section>
+            <h2>Overview</h2>
+            <p>This document provides an overview of the Python functions used in the Flask application for converting SVG designs into 3D printable cookie cutter STL files.</p>
+        </section>
+
+        <section>
+            <h2>Global Constants</h2>
+            <ul>
+                <li><code>REFERENCE_TARGET_X_SIZE</code>: Defines the reference X-size (width) in mm for proportional scaling calculations, especially for cutout thresholds.</li>
+                <li><code>DEFAULT_REFERENCE_CUTOUT_AREA_THRESHOLD</code>: The default area threshold in mm² for internal cutouts (holes) for the reference size. Cutouts smaller than this will be filled.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Utility Functions</h2>
+
+            <h3><code>allowed_file(filename)</code></h3>
+            <p>Checks if a given filename has an allowed SVG extension.</p>
+            <pre><code>def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS</code></pre>
+
+            <h3><code>extrude_any_shape(geometry, height)</code></h3>
+            <p>Extrudes a Shapely Polygon or MultiPolygon into a 3D mesh using <code>trimesh</code>. It iterates through individual polygons in a MultiPolygon and concatenates the resulting meshes.</p>
+            <pre><code>def extrude_any_shape(geometry, height):
+    # ... (code as in app.py) ...</code></pre>
+
+            <h3><code>sample_svg_path(path_segment, resolution=0.5)</code></h3>
+            <p>Samples points along an SVG path segment at a specified resolution. This is crucial for converting vector curves into discrete points suitable for polygon creation.</p>
+            <pre><code>def sample_svg_path(path_segment, resolution=0.5):
+    # ... (code as in app.py) ...</code></pre>
+
+            <h3><code>parse_svg_length(length_str, dpi=96)</code></h3>
+            <p>Parses an SVG length string (e.g., "100mm", "2cm", "50px") and converts it into a numerical value in pixels, based on a given DPI. Handles various SVG units.</p>
+            <pre><code>def parse_svg_length(length_str, dpi=96):
+    # ... (code as in app.py) ...</code></pre>
+
+            <h3><code>parse_transform(transform_string)</code></h3>
+            <p>Parses an SVG <code>transform</code> attribute string (e.g., "translate(10,20) scale(2)") into a list of tuples, each containing the transform type and its numerical values. Supports `translate`, `scale`, `rotate`, and `matrix` transformations.</p>
+            <pre><code>def parse_transform(transform_string):
+    # ... (code as in app.py) ...</code></pre>
+
+            <h3><code>apply_transform(x, y, transform_type, values)</code></h3>
+            <p>Applies a single SVG transformation (translate, scale, rotate, or matrix) to a given (x, y) coordinate pair. This is used to correctly interpret SVG path data that might have transformations applied.</p>
+            <pre><code>def apply_transform(x, y, transform_type, values):
+    # ... (code as in app.py) ...</code></pre>
+
+            <h3><code>generate_bridge_connections(polygons, extra_bridge_factor=0.0)</code></h3>
+            <p>Generates structural bridges between a list of Shapely polygons. It first uses a Minimum Spanning Tree (MST) algorithm to ensure all disjoint parts are connected, then adds additional bridges based on the <code>extra_bridge_factor</code> for increased stability.</p>
+            <pre><code>def generate_bridge_connections(polygons, extra_bridge_factor=0.0):
+    # ... (code as in app.py) ...</code></pre>
+
+            <h3><code>ensure_minimum_bridges(outer_poly, inner_polys, num_points_on_inner_perimeter=4)</code></h3>
+            <p>Creates a specified minimum number of bridges connecting inner polygons to the main outer polygon. It samples points along the inner polygon's perimeter and finds the nearest point on the outer polygon to form robust connections.</p>
+            <pre><code>def ensure_minimum_bridges(outer_poly, inner_polys, num_points_on_inner_perimeter=4):
+    # ... (code as in app.py) ...</code></pre>
+
+            <h3><code>fill_small_cutouts(polygon, area_threshold=5.0)</code></h3>
+            <p>Processes a Shapely Polygon or MultiPolygon to remove (fill in) interior holes (cutouts) whose area is smaller than the specified <code>area_threshold</code>. Returns the modified polygon and a list of areas of the removed holes.</p>
+            <pre><code>def fill_small_cutouts(polygon, area_threshold=5.0):
+    # ... (code as in app.py) ...</code></pre>
+
+            <h3><code>list_internal_cutouts(normalized_outlines)</code></h3>
+            <p>Identifies and lists the areas of internal cutouts (holes) from a set of normalized SVG outlines. This function is used to analyze the original SVG design's holes before any buffering or filling operations.</p>
+            <pre><code>def list_internal_cutouts(normalized_outlines):
+    # ... (code as in app.py) ...</code></pre>
+
+            <h3><code>plot_cutter_preview(normalized_outlines, removed_hole_geometries, wall_thickness, current_cutout_threshold, target_x, output_base_name, outer_base_shape_buffered, output_path)</code></h3>
+            <p>Generates a 2D PNG preview image of the cookie cutter design. It visualizes the cutter walls, the outer base, and highlights which internal cutouts are filled (red) or kept (green dashed border), along with their areas. This provides a quick visual check of the generated design.</p>
+            <pre><code>def plot_cutter_preview(normalized_outlines, removed_hole_geometries, wall_thickness, current_cutout_threshold, target_x, output_base_name, outer_base_shape_buffered, output_path):
+    # ... (code as in app.py) ...</code></pre>
+
+            <h3><code>generate_stl_preview_image(mesh, output_path, output_base_name, target_x)</code></h3>
+            <p>Generates a 2D PNG preview image of the final 3D STL mesh from an isometric view. It uses the <code>vedo</code> library for off-screen rendering, applies a slight rotation for better visibility, and saves the image. This function is crucial for providing a visual representation of the generated 3D model.</p>
+            <pre><code>def generate_stl_preview_image(mesh, output_path, output_base_name, target_x):
+    # ... (code as in app.py) ...</code></pre>
+        </section>
+
+        <section>
+            <h2>Flask Routes</h2>
+            <h3><code>/</code> (GET)</h3>
+            <p>Renders the main <code>index.html</code> page, which contains the form for uploading SVG files and setting parameters.</p>
+
+            <h3><code>/process_svg</code> (POST)</h3>
+            <p>Handles the form submission. It processes the uploaded SVG, applies transformations, generates the 3D model, creates STL files, and generates 2D and 3D preview images. It then redirects to the <code>result.html</code> page to display the generated files.</p>
+
+            <h3><code>/download/&lt;filename&gt;</code> (GET)</h3>
+            <p>Allows users to download the generated STL files.</p>
+
+            <h3><code>/preview/&lt;filename&gt;</code> (GET)</h3>
+            <p>Serves the generated 2D and 3D preview images to be displayed on the <code>result.html</code> page.</p>
+        </section>
+
+        <div class="text-center mt-8">
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                Back to Home
+            </a>
+        </div>
+    </div>
+</body>
+</html>

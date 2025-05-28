@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookie Cutter Results</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light blue-gray background */
+            color: #334155; /* Darker text */
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            transition: transform 0.2s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: #3b82f6; /* Blue-500 */
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #2563eb; /* Blue-600 */
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background-color: #6b7280; /* Gray-500 */
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #4b5563; /* Gray-600 */
+            transform: translateY(-1px);
+        }
+        .flash-message {
+            background-color: #fcd34d; /* Yellow-300 */
+            color: #92400e; /* Yellow-900 */
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+        .image-preview-container {
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping for smaller screens */
+            gap: 1.5rem; /* Space between images */
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+        .image-wrapper {
+            flex: 1 1 calc(50% - 0.75rem); /* Two columns, with gap */
+            max-width: calc(50% - 0.75rem); /* Max width for two columns */
+            min-width: 300px; /* Minimum width to prevent images from becoming too small */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f8fafc; /* Lighter background for image card */
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+        .image-wrapper img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            object-fit: contain; /* Ensure the entire image is visible */
+            border: 1px solid #e2e8f0; /* Light border around images */
+        }
+        @media (max-width: 768px) {
+            .image-wrapper {
+                flex: 1 1 100%; /* Single column on small screens */
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body class="p-4">
+    <div class="container">
+        <h1 class="text-4xl font-bold text-center mb-8 text-gray-800">Cookie Cutter Generation Results</h1>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-message">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% if generated_files %}
+            {% for file_info in generated_files %}
+                <div class="card">
+                    <h2 class="text-2xl font-semibold mb-4 text-gray-700">Cutter: {{ file_info.width }}x{{ file_info.height }} mm</h2>
+                    <p class="text-gray-600 mb-4">Total Height: {{ file_info.total_height }} mm</p>
+
+                    <div class="image-preview-container">
+                        <div class="image-wrapper">
+                            <h3 class="text-lg font-medium mb-2 text-gray-700">2D Cutter Preview</h3>
+                            <img src="{{ url_for('serve_preview', filename=file_info.preview_filename) }}" alt="2D Cutter Preview" class="w-full h-auto">
+                        </div>
+                        <div class="image-wrapper">
+                            <h3 class="text-lg font-medium mb-2 text-gray-700">3D STL Preview</h3>
+                            <img src="{{ url_for('serve_preview', filename=file_info.stl_preview_filename) }}" alt="3D STL Preview" class="w-full h-auto">
+                        </div>
+                    </div>
+
+                    <div class="mt-6 flex justify-center space-x-4">
+                        <a href="{{ url_for('download_file', filename=file_info.stl_filename) }}" class="btn btn-primary">
+                            Download STL ({{ file_info.stl_filename }})
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-center text-gray-600 text-xl">No files were generated. Please go back and try again.</p>
+        {% endif %}
+
+        <div class="text-center mt-8">
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                Go Back
+            </a>
+        </div>
+    </div>
+</body>
+</html>

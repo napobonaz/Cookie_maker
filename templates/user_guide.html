@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookie Cutter Generator User Handbook</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f4f5; /* Gray-100 */
+            color: #334155; /* Gray-700 */
+            line-height: 1.75;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 3rem;
+        }
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #1e293b; /* Gray-800 */
+            margin-top: 0;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        h2 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #1e293b; /* Gray-800 */
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid #e5e7eb; /* Gray-200 */
+            padding-bottom: 0.75rem;
+        }
+        h3 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #374151; /* Gray-700 */
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #4b5563; /* Gray-600 */
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        p, ul, ol {
+            margin-bottom: 1.25rem;
+            color: #4a5568; /* Gray-600 */
+        }
+        ul, ol {
+            padding-left: 2rem;
+        }
+        li {
+            margin-bottom: 0.75rem;
+        }
+        code {
+            background-color: #f3f4f6; /* Gray-100 */
+            color: #1e293b; /* Gray-800 */
+            padding: 0.2em 0.4em;
+            border-radius: 6px;
+            font-family: 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background-color: #2d3748; /* Gray-800 */
+            color: #f3f4f6; /* Gray-100 */
+            padding: 1.25rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+            font-family: 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', monospace;
+        }
+        a {
+            color: #3b82f6; /* Blue-500 */
+            text-decoration: none;
+            font-weight: 500;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+            cursor: pointer;
+            text-align: center;
+        }
+        .btn-secondary {
+            background-color: #6b7280; /* Gray-500 */
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #4b5563; /* Gray-600 */
+            transform: translateY(-1px);
+        }
+        /* Table of Contents Styles */
+        .table-of-contents {
+            background-color: #f9fafb; /* Gray-50 */
+            border: 1px solid #e5e7eb; /* Gray-200 */
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .table-of-contents h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #374151; /* Gray-700 */
+            margin-top: 0;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 0.5rem;
+        }
+        .table-of-contents ul {
+            padding-left: 1.5rem;
+        }
+        .table-of-contents li {
+            margin-bottom: 0.5rem;
+        }
+        .table-of-contents a {
+            color: #4a5568; /* Gray-600 */
+            font-weight: 500;
+        }
+        .table-of-contents a:hover {
+            color: #3b82f6; /* Blue-500 */
+        }
+        .param-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .param-label .icon {
+            color: #64748b; /* Slate-500 */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Cookie Cutter Generator User Handbook</h1>
+
+        <section class="table-of-contents">
+            <h2>Table of Contents</h2>
+            <ul>
+                <li><a href="#overview">1. Overview of the Tool</a></li>
+                <li><a href="#preparing-svg">2. Preparing Your SVG File in Inkscape</a>
+                    <ul>
+                        <li><a href="#inkscape-workflow">2.0. Recommended Inkscape Workflow</a></li>
+                        <li><a href="#convert-to-paths">2.1. Convert All Objects to Paths</a></li>
+                        <li><a href="#convert-strokes">2.2. Convert Strokes to Paths (Especially for Text)</a></li>
+                        <li><a href="#apply-transforms">2.3. Apply Transforms</a></li>
+                        <li><a href="#save-svg">2.4. Save as Plain SVG or Optimized SVG</a></li>
+                    </ul>
+                </li>
+                <li><a href="#using-gui">3. Using the Web Interface (GUI)</a>
+                    <ul>
+                        <li><a href="#main-page">3.1. Main Page (index.html)</a></li>
+                        <li><a href="#results-page">3.2. Results Page (result.html)</a></li>
+                        <li><a href="#file-locations">3.3. Where are the files saved?</a></li>
+                    </ul>
+                </li>
+                <li><a href="#troubleshooting">4. Troubleshooting Tips</a></li>
+                <li><a href="#advanced-customization">5. Further Customization (Advanced Users)</a></li>
+                <li><a href="#back-to-home">Back to Home</a></li>
+            </ul>
+        </section>
+
+        <section id="overview">
+            <h2>1. Overview of the Tool</h2>
+            <p>This web application provides a user-friendly interface to convert your 2D SVG vector graphics into 3D printable cookie cutter STL files. It leverages powerful libraries to automate complex design tasks, including:</p>
+            <ul>
+                <li><strong>Scaling:</strong> Automatically scales your design to various target sizes, ensuring your cutter is the perfect fit.</li>
+                <li><strong>Wall Generation:</strong> Creates the precise cutting edges and sturdy support walls based on your specified thickness and height.</li>
+                <li><strong>Base Creation:</strong> Adds a robust base to the cutter, providing stability and ease of use.</li>
+                <li><strong>Internal Cutout Management:</strong> Intelligently identifies internal cutouts (holes) within your design. You can define a threshold to either preserve these as cutouts or fill them in, which is particularly useful for small, delicate details that might otherwise break during printing or use.</li>
+                <li><strong>Structural Bridging:</strong> Automatically generates internal and external structural bridges to connect disconnected parts of your design. This ensures the final cutter is a single, strong, and robust piece, preventing breakage.</li>
+                <li><strong>Visual Previews:</strong> Generates immediate visual feedback with both 2D and 3D PNG images of the generated cutter. These previews show the walls, base, and how internal cutouts are handled, along with their calculated areas, allowing you to verify the design before printing.</li>
+            </ul>
+        </section>
+
+        <section id="preparing-svg">
+            <h2>2. Preparing Your SVG File in Inkscape (Crucial Steps!)</h2>
+            <p>Proper SVG preparation is the most critical step for successful STL generation. Follow these detailed steps in Inkscape <em>before</em> uploading your SVG to the web interface:</p>
+
+            <h3 id="inkscape-workflow">2.0. Recommended Inkscape Workflow:</h3>
+            <p>For best results, follow this design and preparation workflow in Inkscape:</p>
+            <ol>
+                <li><strong>Design Outline:</strong> Create your primary outline shape with a fill color but no stroke. This will form the main cutting edge of your cookie cutter.</li>
+                <li><strong>Internal Contours:</strong> For any internal closed contours (holes, inner details), create them using available shapes (e.g., circles, rectangles) or drawing tools. These should also have a fill and no stroke initially.</li>
+                <li><strong>Recreate Internal Lines as Spline (Optional but Recommended):</strong> For internal lines or details that are not closed contours but should be part of the cutter's structure (e.g., details that are extruded as walls), recreate them as splines if they are currently simple lines. This ensures they are treated as paths.</li>
+                <li><strong>Convert All to Paths:</strong> Select all objects in your document (<kbd>Ctrl</kbd>+<kbd>A</kbd>). Then, convert them to paths by going to <strong>Path &gt; Object to Path</strong> (<kbd>Shift</kbd>+<kbd>Ctrl</kbd>+<kbd>C</kbd>). Repeat this step if you have nested groups until all elements are individual paths.</li>
+                <li><strong>Resize Page to Content:</strong> With everything still selected, adjust the document size to fit your design precisely. Go to <strong>File &gt; Document Properties</strong>, and under the "Custom size" section, click "Resize page to drawing or selection". This helps normalize the SVG's coordinate system.</li>
+                <li><strong>Break Apart Vectorized Sections (if applicable):</strong> If you have vectorized pixel graphics (e.g., from a bitmap trace) that result in multiple overlapping or grouped paths, select them and use <strong>Path &gt; Break Apart</strong>. This separates complex paths into simpler, distinct components, which can be crucial for correct cutout detection.</li>
+                <li><strong>Apply Transforms:</strong> This is a critical step! With all objects selected, use the "Apply Transforms" extension. Go to <strong>Extensions &gt; Modify Path &gt; Apply Transforms</strong>. Run this extension to bake all scaling, rotation, and translation directly into the path data, ensuring absolute coordinates. If you don't have this extension, it's highly recommended to install it (e.g., from <a href="https://github.com/Klowner/inkscape-applytransforms" target="_blank">GitHub</a>).</li>
+                <li><strong>Save as Optimized SVG:</strong> Finally, save your file as an "Optimized SVG" (<strong>File &gt; Save As...</strong>, choose "Optimized SVG" from the dropdown). This removes unnecessary metadata and ensures a clean, parsable SVG structure.</li>
+            </ol>
+
+            <h3 id="convert-to-paths">2.1. Convert All Objects to Paths:</h3>
+            <p>SVG files can contain various object types such as rectangles, circles, ellipses, polygons, text, and grouped objects. For the script to correctly interpret your design, all these elements must be converted into fundamental <code>path</code> elements.</p>
+            <ul>
+                <li><strong>Action:</strong> Select all objects in your Inkscape document. You can do this quickly by pressing <kbd>Ctrl</kbd>+<kbd>A</kbd> or by navigating to <strong>Edit &gt; Select All</strong>.</li>
+                <li>Next, go to <strong>Path &gt; Object to Path</strong> (keyboard shortcut: <kbd>Shift</kbd>+<kbd>Ctrl</kbd>+<kbd>C</kbd>).</li>
+                <li><strong>Note:</strong> If your design includes grouped objects, this conversion might not apply to elements nested within groups. You may need to **Ungroup** them (keyboard shortcut: <kbd>Shift</kbd>+<kbd>Ctrl</kbd>+<kbd>G</kbd>) repeatedly until all elements are individual objects, then re-apply "Object to Path" to ensure everything is converted.</li>
+            </ul>
+
+            <h3 id="convert-strokes">2.2. Convert Strokes to Paths (Especially for Text):</h3>
+            <p>If your design uses outlines (strokes) rather than filled shapes (e.g., text with only an outline, or a line drawing), the script needs these strokes to be converted into actual filled paths. This transforms the stroke's visual thickness into a defined shape.</p>
+            <ul>
+                <li><strong>Action:</strong> After ensuring all objects are paths (from Step 2.1), select all objects again.</li>
+                <li>Then, go to <strong>Path &gt; Stroke to Path</strong>. This action will create a new filled object that represents the outline of your original stroke.</li>
+                <li><strong>Important for Text:</strong> If your design includes text, first convert the text objects into path objects using "Object to Path" (Step 2.1). Then, apply "Stroke to Path" to convert the outline of the letters into a distinct filled path.</li>
+            </ul>
+
+            <h3 id="apply-transforms">2.3. Apply Transforms:</h3>
+            <p>Inkscape, like many vector graphics software, can store transformations (such as scaling, rotation, or translation) as attributes applied to an object, rather than directly modifying the object's underlying path coordinates. If these transforms are not "baked" into the path data, the Python script might interpret the original, untransformed path, leading to incorrect scaling, positioning, or distorted shapes in your generated STL.</p>
+            <ul>
+                <li><strong>Action:</strong> This is a critical step to ensure accuracy! It's highly recommended to use the "Apply Transforms" extension within Inkscape. If you don't have this extension installed, you can typically find it on GitHub (e.g., <a href="https://github.com/Klowner/inkscape-applytransforms" target="_blank">https://github.com/Klowner/inkscape-applytransforms</a>).</li>
+                <li><strong>In Inkscape:</strong> Go to <strong>Extensions &gt; Modify Path &gt; Apply Transforms</strong>. Run this extension. This process will bake all transformations directly into the path data, making the SVG explicit about the final shape.</li>
+                <li><strong>Verify:</strong> After applying transforms, you can select an object and examine its properties in the Inkscape XML editor (Edit > XML Editor) or object properties panel. The <code>x</code>, <code>y</code>, <code>width</code>, <code>height</code> attributes should now reflect the actual dimensions of the transformed object, rather than just the original dimensions with a separate transform attribute.</li>
+            </ul>
+
+            <h3 id="save-svg">2.4. Save as Plain SVG or Optimized SVG:</h3>
+            <p>Saving your file in a clean SVG format helps ensure the script can parse it without issues from extraneous metadata or complex Inkscape-specific elements.</p>
+            <ul>
+                <li><strong>Action:</strong> Go to <strong>File &gt; Save As...</strong> and from the "Save as type" dropdown, choose either "Plain SVG" or "Optimized SVG". "Optimized SVG" is often preferred as it removes unnecessary metadata, resulting in a cleaner and smaller file.</li>
+            </ul>
+        </section>
+
+        <section id="using-gui">
+            <h2>3. Using the Web Interface (GUI)</h2>
+            <p>The application provides a straightforward web interface for generating your cookie cutters. Follow these steps:</p>
+
+            <h3 id="main-page">3.1. Main Page (index.html)</h3>
+            <p>On the main page, you will find a form to upload your SVG and configure the cutter parameters:</p>
+            <ul>
+                <li><strong class="param-label"><i class="fas fa-upload icon"></i> Upload SVG File:</strong> Click "Choose File" to select your prepared SVG file. (See Section 2 for SVG preparation).</li>
+                <li><strong class="param-label"><i class="fas fa-grip-lines-vertical icon"></i> Wall Thickness (mm):</strong> Sets the thickness of the cutting walls. A common value is 0.75mm for good strength and sharp edges.</li>
+                <li><strong class="param-label"><i class="fas fa-arrows-alt-v icon"></i> Wall Height (mm):</strong> Defines the total height of the cutting walls. This is the height of the inner cutting edge.</li>
+                <li><strong class="param-label"><i class="fas fa-ruler-vertical icon"></i> Outer Wall Height (mm):</strong> Sets the height of the outermost wall (the one that forms the overall shape of the cutter). This is often set slightly lower than the inner walls to create a comfortable grip and make it easier to press.</li>
+                <li><strong class="param-label"><i class="fas fa-layer-group icon"></i> Base Thickness (mm):</strong> Determines the thickness of the solid base plate of the cutter. This provides stability to the entire structure.</li>
+                <li><strong class="param-label"><i class="fas fa-expand-arrows-alt icon"></i> Base Margin (mm):</strong> Controls how much the base extends horizontally beyond the cutting walls. A larger margin provides more stability and a larger surface area for handling.</li>
+                <li><strong class="param-label"><i class="fas fa-bezier-curve icon"></i> Curve Resolution (mm):</strong> Affects the smoothness of curves in the generated STL. Smaller values (e.g., 0.1) result in more points along curves, leading to smoother curves but larger STL file sizes and longer processing times. Larger values (e.g., 0.5) create more faceted curves but smaller files.</li>
+                <li><strong class="param-label"><i class="fas fa-network-wired icon"></i> Internal Bridge Density (0.0-1.0):</strong> Controls how many internal support bridges are added between disconnected inner parts of your design (e.g., connecting the inner loop of an 'O' to its outer loop). A value of 0.0 adds only essential bridges (minimal connections to ensure a single manifold mesh), while 1.0 adds many more for maximum structural stability.</li>
+                <li><strong class="param-label"><i class="fas fa-project-diagram icon"></i> Outer Bridges per Inner Poly:</strong> Specifies the minimum number of bridges connecting each inner "island" (a distinct, closed inner shape like the hole in a letter 'O' or a separate inner detail) to the main outer perimeter of the cutter. This ensures inner elements are well-supported.</li>
+                <li><strong class="param-label"><i class="fas fa-ruler-horizontal icon"></i> Target X Sizes (mm, comma-separated):</strong> Enter a comma-separated list of desired widths (X-dimension) for your cookie cutter. The application will generate a separate STL file and corresponding preview images for each specified size. Example: <code>60, 80, 100</code>.</li>
+                <li><strong class="param-label"><i class="fas fa-cut icon"></i> Reference Cutout Infill Threshold (mm² for 80mm cutter):</strong> This is a crucial setting for managing small details. Any internal cutout (hole or inner shape) with an area smaller than this threshold (in square millimeters) will be filled in the final STL, making it a solid part of the cutter. This value is applied to the 80mm reference size.</li>
+                <li><strong class="param-label"><i class="fas fa-balance-scale icon"></i> Enable Proportional Scaling of Cutout Infill Threshold:</strong> If checked, the "Cutout Infill Threshold" you set for the 80mm reference cutter will be proportionally scaled for other cutter sizes. This helps maintain consistent detail handling across different sizes (e.g., a tiny hole that should be filled on a large cutter will also be filled on a scaled-down version). If unchecked, the exact threshold you entered will be used for all generated sizes.</li>
+            </ul>
+            <p class="text-center mt-4">
+                <button type="submit" class="btn btn-primary">Generate Cookie Cutter</button>
+            </p>
+
+            <h3 id="results-page">3.2. Results Page (result.html)</h3>
+            <p>After clicking "Generate Cookie Cutter", you will be redirected to the results page. Here, you will see:</p>
+            <ul>
+                <li><strong>Cutter Dimensions:</strong> The generated width, height, and total height of each cutter.</li>
+                <li><strong>2D Cutter Preview:</strong> A 2D PNG image showing the top-down view of your cutter.
+                    <ul>
+                        <li><strong>Light Gray Area:</strong> Represents the outer base.</li>
+                        <li><strong>Black Lines:</strong> Show the cutting walls.</li>
+                        <li><strong>Red Filled Areas:</strong> Indicate internal cutouts that were smaller than your threshold and have been filled.</li>
+                        <li><strong>Transparent Areas with Green Dashed Borders:</strong> Indicate cutouts that were larger than the threshold and remain as holes.</li>
+                        <li><strong>Area Labels:</strong> Each cutout will have its area (in mm²) displayed, helping you verify the infill behavior.</li>
+                    </ul>
+                </li>
+                <li><strong>3D STL Preview:</strong> A 3D PNG image showing an isometric view of the generated STL model. This gives you a quick visual of the 3D structure.</li>
+                <li><strong>Download STL Button:</strong> Click this button to download the generated <code>.stl</code> file for 3D printing.</li>
+            </ul>
+            <p class="text-center mt-4">
+                <a href="#" class="btn btn-secondary">Go Back</a> (This button returns you to the main page.)
+            </p>
+
+            <h3 id="file-locations">3.3. Where are the files saved?</h3>
+            <p>When you upload an SVG and generate STL files, the application temporarily stores files on the server:</p>
+            <ul>
+                <li><strong>Uploaded SVG:</strong> Your original SVG file is temporarily saved in the `uploads` directory on the server. This file is automatically removed after processing to keep the server clean.</li>
+                <li><strong>Generated STL and Preview Images:</strong> The resulting <code>.stl</code> files and the <code>.png</code> preview images (both 2D and 3D) are saved in the `output` directory on the server. These files remain there until manually cleared or the server is restarted. You can download them directly from the results page.</li>
+            </ul>
+        </section>
+
+        <section id="troubleshooting">
+            <h2>4. Troubleshooting Tips</h2>
+            <ul>
+                <li><strong>"No valid paths found in SVG." error:</strong>
+                    <ul>
+                        <li><strong>Cause:</strong> Your SVG file likely contains objects that are not paths, or the paths are empty/degenerate.</li>
+                        <li><strong>Solution:</strong> Re-check Step 2.1 and 2.2 in "Preparing Your SVG File in Inkscape". Ensure all objects are converted to paths and strokes to paths.</li>
+                    </ul>
+                </li>
+                <li><strong>"Combined SVG outline has zero or near-zero width, cannot scale." error:</strong>
+                    <ul>
+                        <li><strong>Cause:</strong> The overall bounding box of your SVG design is extremely small or has no width/height, often due to unapplied transforms or very small elements.</li>
+                        <li><strong>Solution:</strong> Re-check Step 2.3 in "Preparing Your SVG File in Inkscape" (Apply Transforms). Also, ensure your design is not accidentally tiny or consists only of single points.</li>
+                    </ul>
+                </li>
+                <li><strong>Cutouts not filling/filling incorrectly:</strong>
+                    <ul>
+                        <li><strong>Cause:</strong> The `Cutout Infill Threshold` might be too high or too low, or proportional scaling is affecting it unexpectedly.</li>
+                        <li><strong>Solution:</strong> Adjust the `Cutout Infill Threshold` on the main form. Review the preview images carefully to see the effect. If proportional scaling is enabled, consider unchecking it to use a fixed threshold.</li>
+                    </ul>
+                </li>
+                <li><strong>Cutter looks thin/flimsy or too thick:</strong>
+                    <ul>
+                        <li><strong>Cause:</strong> `Wall Thickness` or `Base Thickness` parameters are not suitable for your printer or desired strength.</li>
+                        <li><strong>Solution:</strong> Adjust `Wall Thickness` and `Base Thickness` on the main form. Typical wall thicknesses for cookie cutters are between 0.6mm and 1.0mm.</li>
+                    </ul>
+                </li>
+                <li><strong>Jagged edges on curves:</strong>
+                    <ul>
+                        <li><strong>Cause:</strong> `Curve Resolution` is too high (value is too large).</li>
+                        <li><strong>Solution:</strong> Decrease the `Curve Resolution` value on the main form. This will generate more points along curves, making them smoother, but will also increase processing time and STL file size.</li>
+                    </ul>
+                </li>
+                <li><strong>Disconnected parts or weak connections:</strong>
+                    <ul>
+                        <li><strong>Cause:</strong> The `Internal Bridge Density` or `Outer Bridges per Inner Poly` might be too low, or your design has very thin connections.</li>
+                        <li><strong>Solution:</strong> Increase `Internal Bridge Density` to add more internal support bridges. Increase `Outer Bridges per Inner Poly` to ensure more connections between inner islands and the outer wall. You might also need to manually thicken very thin parts of your design in Inkscape.</li>
+                    </ul>
+                </li>
+            </ul>
+        </section>
+
+        <section id="advanced-customization">
+            <h2>5. Further Customization (Advanced Users)</h2>
+            <p>For users familiar with Python and the underlying libraries, the `app.py` script is well-commented, allowing for deeper modifications:</p>
+            <ul>
+                <li><strong>Adjusting Bridge Parameters:</strong> Experiment with the exact values for bridge widths within the `app.py` code if the GUI parameters are not sufficient.</li>
+                <li><strong>Adding More Sizes:</strong> While the GUI allows multiple sizes, you can modify the `target_x_sizes` list directly in the `app.py` script for custom batch processing.</li>
+                <li><strong>Implementing Complex Logic:</strong> The modular structure of the code allows you to delve deeper and modify aspects like dynamic wall heights for specific sections, or implement more complex infill logic based on shape characteristics.</li>
+            </ul>
+        </section>
+
+        <div class="text-center mt-8" id="back-to-home">
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                Back to Home
+            </a>
+        </div>
+    </div>
+</body>
+</html>
